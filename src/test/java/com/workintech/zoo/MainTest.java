@@ -103,7 +103,7 @@ class MainTest {
     @DisplayName("Test Koala Setters and Getters")
     void testKoalaSettersAndGetters() {
         // Creating an instance using no-args constructor
-        Koala koala = new Koala();
+        Koala koala = new Koala(1, "Koala 1");
         koala.setId(2);
         koala.setName("Kody");
         koala.setSleepHour(22.0);

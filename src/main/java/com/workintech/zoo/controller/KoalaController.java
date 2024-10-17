@@ -1,61 +1,66 @@
 package com.workintech.zoo.controller;
 
+import com.workintech.zoo.entity.Koala;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/workintech/koalas")
+@RequestMapping("/koalas")
 public class KoalaController {
 
-    private Map<Integer, String> koalas;
+    private Map<Integer, Koala> koalas;
 
     public KoalaController() {
         koalas = new HashMap<>();
-        // Örnek koala verisi
-        koalas.put(1, "Koala 1");
-        koalas.put(2, "Koala 2");
+        koalas.put(1, new Koala(1, "Koala 1", 10.0, 30.0, "Female"));
+        koalas.put(2, new Koala(2, "Koala 2", 12.0, 28.0, "Male"));
     }
 
-    // Tüm koala'ları listele
     @GetMapping
-    public Map<Integer, String> getAllKoalas() {
-        return koalas;
+    public ResponseEntity<Collection<Koala>> getAllKoalas() {
+        return ResponseEntity.ok(koalas.values());
     }
 
-    // Belirli bir ID'deki koala'yı getir
     @GetMapping("/{id}")
-    public String getKoalaById(@PathVariable int id) {
-        return koalas.get(id);
+    public ResponseEntity<Koala> getKoalaById(@PathVariable int id) {
+        Koala koala = koalas.get(id);
+        if (koala == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+        return ResponseEntity.ok(koala);
     }
 
-    // Yeni bir koala ekle
     @PostMapping
-    public String addKoala(@RequestParam String name) {
+    public ResponseEntity<Koala> addKoala(@RequestBody Koala koala) {
         int id = koalas.size() + 1;
-        koalas.put(id, name);
-        return "Koala added with ID: " + id;
+        koala.setId(id);
+        koalas.put(id, koala);
+        return ResponseEntity.status(HttpStatus.OK).body(koala);
     }
 
-    // Belirli bir ID'deki koala'yı güncelle
     @PutMapping("/{id}")
-    public String updateKoala(@PathVariable int id, @RequestParam String name) {
-        if (koalas.containsKey(id)) {
-            koalas.put(id, name);
-            return "Koala updated with ID: " + id;
-        } else {
-            return "Koala not found with ID: " + id;
+    public ResponseEntity<Koala> updateKoala(@PathVariable int id, @RequestBody Koala koala) {
+        Koala existingKoala = koalas.get(id);
+        if (existingKoala == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
+        koala.setId(id);
+        koalas.put(id, koala);
+        return ResponseEntity.ok(koala);
     }
 
-    // Belirli bir ID'deki koala'yı sil
     @DeleteMapping("/{id}")
-    public String deleteKoala(@PathVariable int id) {
-        if (koalas.containsKey(id)) {
-            koalas.remove(id);
-            return "Koala deleted with ID: " + id;
-        } else {
-            return "Koala not found with ID: " + id;
+    public ResponseEntity<Void> deleteKoala(@PathVariable int id) {
+        Koala existingKoala = koalas.get(id);
+        if (existingKoala == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
+        koalas.remove(id);
+        return ResponseEntity.ok().build();
     }
 }

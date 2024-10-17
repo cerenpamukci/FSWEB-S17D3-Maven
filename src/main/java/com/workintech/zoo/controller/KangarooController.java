@@ -46,6 +46,7 @@ public class KangarooController {
             return save(kangaroo);
         }
     }
+
     @DeleteMapping("/{id}")
     public Kangaroo delete(@PathVariable Integer id) {
         ZooKangarooValidation.isIdValid(id);

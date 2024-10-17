@@ -13,4 +13,7 @@ public class Koala {
     private Double weight;
      private Double sleepHour;
     private String gender;
+
+    public Koala(int i, String s) {
+    }
 }
